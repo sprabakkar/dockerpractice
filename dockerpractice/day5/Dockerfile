@@ -1,0 +1,45 @@
+FROM centos:7.4.1708
+RUN yum install -y \
+       java-1.8.0-openjdk  \
+       java-1.8.0-openjdk-devel \
+    && echo "securerandom.source=file:/dev/urandom" >> /usr/lib/jvm/java/jre/lib/security/java.security
+RUN mkdir prabakar
+RUN mkdir prabakar/ok
+RUN yum -y install sudo epel-release; yum clean all
+RUN yum install -y wget
+ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.144-0.b01.el7_4.x86_64
+
+ENV TOMCAT_MAJOR 8
+ENV TOMCAT_VERSION 8.0.32
+
+ENV CATALINA_HOME prabakar/apache-tomcat-$TOMCAT_VERSION
+ENV PATH $CATALINA_HOME/bin:$PATH
+
+RUN mkdir -p "$CATALINA_HOME"
+#WORKDIR $CATALINA_HOME
+
+RUN gpg --keyserver pool.sks-keyservers.net --recv-keys \
+    05AB33110949707C93A279E3D3EFE6B686867BA6 \
+    07E48665A34DCAFAE522E5E6266191C37C037D42 \
+    47309207D818FFD8DCD3F83F1931D684307A10A5 \
+    541FBE7D8F78B25E055DDEE13C370389288584E7 \
+    61B832AC2F1C5A90F0F9B00A1C506407564C17A3 \
+    79F7026C690BAA50B92CD8B66A3AD3F4F22C4FED \
+    9BA44C2621385CB966EBA586F72C284D731FABEE \
+    A27677289986DB50844682F8ACB77FC2E86E29AC \
+    A9C5DF4D22E99998D9875A5110C01C5A2F6059E7 \
+    DCFD35E0BF8CA7344752DE8B6FB21E8933C60243 \
+    F3A04C595DB5B6A5F1ECA43E3B7BBB100D811BBE \
+    F7DA48BB64BCB84ECBA7EE6935CD23C10D498E23
+
+
+RUN wget http://archive.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
+RUN chmod +x apache-tomcat-$TOMCAT_VERSION.tar.gz
+RUN tar -xvf apache-tomcat-$TOMCAT_VERSION.tar.gz -C prabakar/
+
+ADD sample.war $CATALINA_HOME/webapps/
+
+#WORKDIR $CATALINA_HOME
+
+EXPOSE 8080
+CMD ["catalina.sh", "run"]

@@ -1,0 +1,44 @@
+# Delete every Docker containers
+# Must be run first because images are attached to containers
+docker rm -f $(docker ps -a -q)
+
+# Delete every Docker image
+docker rmi -f $(docker images -q)
+
+Docker: Remove all images and containers
+#!/bin/bash
+# Delete all containers
+docker rm $(docker ps -a -q)
+# Delete all imag00es
+docker rmi $(docker images -q)
+docker rmi -f $(docker images -q)
+
+Force delete everything with attached volumes:
+
+docker rm -vf $(docker ps -aq)
+
+-f to brute force and resolve any conflicts between images and containers:
+
+docker rmi -f $ (docker images -q)
+
+docker rm -f $ (ps docker -q -a)
+
+#Stop all dockers
+
+docker stop $(ps docker -q -a)
+
+Force delete everything with attached volumes:
+
+docker rm -vf $(docker ps -aq)
+
+There is also new docker command, that will delete all unused images and volumes. It is less brute force and is usually save enough to put in cron on dev machine.
+
+docker system prune --all
+
+
+BUILD COMMAND
+[psingaram@innovation-lab day3]$ docker build -t my-cent7-image .
+
+RUN COMMAND
+[psingaram@innovation-lab day3]$ docker run -it 5076a7d1a386
+
